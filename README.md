@@ -1,22 +1,28 @@
 # last-letter-words
-english words to use on roblox game last letter
+
+Trap words:
 "Bk"
-"Chargoggagoggmanchauggagoggchaubunagungamaugg"
 "Daledh"
-"Electroencephalographically"
+"Edh"
 "Fardh"
-"Floccinaucinihilipilification"
 "Hdbk"
-"Immunoelectrophoretically"
-"Lymphangioendothelioma"
-"Microspectrophotometry"
+"Mmfd"
 "Nabk"
 "Schlemihl"
 "Shlemiehl"
 "Sprachgefuhl"
-"Supercalifragilisticexpialidocious"
 "Peuhl
-"Taumatawhakatangihangakoauauotamateaturipukakapikimaungahoronukupokaiwhenuakitanatahu"
 "Unskaithd"
-"Xenotransplantation"
 "Yrbk"
+
+
+Long words:
+"Chargoggagoggmanchauggagoggchaubunagungamaugg"
+"Electroencephalographically"
+"Floccinaucinihilipilification"
+"Immunoelectrophoretically"
+"Lymphangioendothelioma"
+"Microspectrophotometry"
+"Supercalifragilisticexpialidocious"
+"Taumatawhakatangihangakoauauotamateaturipukakapikimaungahoronukupokaiwhenuakitanatahu"
+"Xenotransplantation"
