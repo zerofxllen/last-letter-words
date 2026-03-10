@@ -18,6 +18,27 @@
             margin-bottom: 20px;
             box-sizing: border-box;
         }
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        #filterType {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        #filterInput {
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
         #results {
             border: 1px solid #ccc;
             max-height: 500px;
@@ -36,6 +57,14 @@
 <body>
     <h1>Word Search</h1>
     <input type="text" id="search" placeholder="Search for words..." />
+    <div class="filter-bar">
+        <select id="filterType">
+            <option value="none">No Filter</option>
+            <option value="prefix">Prefix</option>
+            <option value="suffix">Suffix</option>
+        </select>
+        <input type="text" id="filterInput" placeholder="Enter prefix or suffix..." />
+    </div>
     <div class="count">Found: <span id="count">0</span> words</div>
     <div id="results"></div>
 
@@ -70,16 +99,33 @@
             });
         }
 
-        document.getElementById('search').addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
+        function filterWords() {
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            const filterType = document.getElementById('filterType').value;
+            const filterTerm = document.getElementById('filterInput').value.toLowerCase();
+            
             let filtered = allWords;
             
+            // Apply search filter
             if (searchTerm) {
-                filtered = allWords.filter(word => word.toLowerCase().includes(searchTerm));
+                filtered = filtered.filter(word => word.toLowerCase().includes(searchTerm));
+            }
+            
+            // Apply prefix/suffix filter
+            if (filterTerm) {
+                if (filterType === 'prefix') {
+                    filtered = filtered.filter(word => word.toLowerCase().startsWith(filterTerm));
+                } else if (filterType === 'suffix') {
+                    filtered = filtered.filter(word => word.toLowerCase().endsWith(filterTerm));
+                }
             }
             
             displayResults(filtered);
-        });
+        }
+
+        document.getElementById('search').addEventListener('input', filterWords);
+        document.getElementById('filterType').addEventListener('change', filterWords);
+        document.getElementById('filterInput').addEventListener('input', filterWords);
 
         loadWords();
     </script>
