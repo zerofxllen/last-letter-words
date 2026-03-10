@@ -1,1 +1,1 @@
-{\n  ".word1": 1,\n  ".word2": 1,\n  ".word3": 1\n}
+{"word1":{"count":1,"prefix":"w","suffix":"1"},"word2":{"count":1,"prefix":"w","suffix":"2"},"word3":{"count":1,"prefix":"w","suffix":"3"}}
