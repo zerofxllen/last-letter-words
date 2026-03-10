@@ -1,94 +1,133 @@
-const fs = require('fs');
-const path = require('path');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        #search {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        #filterType {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        #filterInput {
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        #results {
+            border: 1px solid #ccc;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .word {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .count {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Word Search</h1>
+    <input type="text" id="search" placeholder="Search for words..." />
+    <div class="filter-bar">
+        <select id="filterType">
+            <option value="none">No Filter</option>
+            <option value="prefix">Prefix</option>
+            <option value="suffix">Suffix</option>
+        </select>
+        <input type="text" id="filterInput" placeholder="Enter prefix or suffix..." />
+    </div>
+    <div class="count">Found: <span id="count">0</span> words</div>
+    <div id="results"></div>
 
-// Load word data
-const wordData = JSON.parse(fs.readFileSync(path.join(__dirname, 'every word'), 'utf8'));
+    <script>
+        let allWords = [];
 
-/**
- * Search words by prefix
- * @param {string} prefix - The prefix to search for
- * @returns {Object} Matching words with their data
- */
-function searchByPrefix(prefix) {
-  const results = {};
-  for (const [word, data] of Object.entries(wordData)) {
-    if (word.startsWith(prefix)) {
-      results[word] = data;
-    }
-  }
-  return results;
-}
+        // Fetch and parse the JSON file
+        async function loadWords() {
+            try {
+                const response = await fetch('https://raw.githubusercontent.com/zerofxllen/last-letter-words/main/every%20word');
+                const data = await response.json();
+                allWords = Object.keys(data);
+                displayResults(allWords);
+            } catch (error) {
+                console.error('Error loading words:', error);
+                document.getElementById('results').innerHTML = '<div class="word">Error loading words</div>';
+            }
+        }
 
-/**
- * Search words by suffix
- * @param {string} suffix - The suffix to search for
- * @returns {Object} Matching words with their data
- */
-function searchBySuffix(suffix) {
-  const results = {};
-  for (const [word, data] of Object.entries(wordData)) {
-    if (word.endsWith(suffix)) {
-      results[word] = data;
-    }
-  }
-  return results;
-}
+        function displayResults(words) {
+            const resultsDiv = document.getElementById('results');
+            const countSpan = document.getElementById('count');
+            
+            resultsDiv.innerHTML = '';
+            countSpan.textContent = words.length;
+            
+            words.slice(0, 100).forEach(word => {
+                const wordDiv = document.createElement('div');
+                wordDiv.className = 'word';
+                wordDiv.textContent = word;
+                resultsDiv.appendChild(wordDiv);
+            });
+        }
 
-/**
- * Search words by both prefix and suffix
- * @param {string} prefix - The prefix to search for
- * @param {string} suffix - The suffix to search for
- * @returns {Object} Matching words with their data
- */
-function searchByPrefixAndSuffix(prefix, suffix) {
-  const results = {};
-  for (const [word, data] of Object.entries(wordData)) {
-    if (word.startsWith(prefix) && word.endsWith(suffix)) {
-      results[word] = data;
-    }
-  }
-  return results;
-}
+        function filterWords() {
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            const filterType = document.getElementById('filterType').value;
+            const filterTerm = document.getElementById('filterInput').value.toLowerCase();
+            
+            let filtered = allWords;
+            
+            // Apply search filter
+            if (searchTerm) {
+                filtered = filtered.filter(word => word.toLowerCase().includes(searchTerm));
+            }
+            
+            // Apply prefix/suffix filter
+            if (filterTerm) {
+                if (filterType === 'prefix') {
+                    filtered = filtered.filter(word => word.toLowerCase().startsWith(filterTerm));
+                } else if (filterType === 'suffix') {
+                    filtered = filtered.filter(word => word.toLowerCase().endsWith(filterTerm));
+                }
+            }
+            
+            displayResults(filtered);
+        }
 
-/**
- * Get all words
- * @returns {Object} All words with their data
- */
-function getAllWords() {
-  return wordData;
-}
+        document.getElementById('search').addEventListener('input', filterWords);
+        document.getElementById('filterType').addEventListener('change', filterWords);
+        document.getElementById('filterInput').addEventListener('input', filterWords);
 
-// Export functions
-module.exports = {
-  searchByPrefix,
-  searchBySuffix,
-  searchByPrefixAndSuffix,
-  getAllWords
-};
-
-// CLI usage
-if (require.main === module) {
-  const args = process.argv.slice(2);
-  const command = args[0];
-  
-  switch(command) {
-    case 'prefix':
-      console.log(searchByPrefix(args[1]));
-      break;
-    case 'suffix':
-      console.log(searchBySuffix(args[1]));
-      break;
-    case 'both':
-      console.log(searchByPrefixAndSuffix(args[1], args[2]));
-      break;
-    case 'all':
-      console.log(getAllWords());
-      break;
-    default:
-      console.log('Usage:');
-      console.log('  node search-words.js prefix <prefix>');
-      console.log('  node search-words.js suffix <suffix>');
-      console.log('  node search-words.js both <prefix> <suffix>');
-      console.log('  node search-words.js all');
-  }
-}
+        loadWords();
+    </script>
+</body>
+</html>
