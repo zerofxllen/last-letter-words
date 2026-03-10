@@ -1,6 +1,7 @@
 # last-letter-words
 
 Trap words:
+"Afd"
 "Bk"
 "Daledh"
 "Edh"
